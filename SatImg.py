@@ -3,9 +3,10 @@
 import os
 from dotenv import load_dotenv
 import requests
+import numpy as np
+import math
 
 load_dotenv()
-MY_API = os.getenv("GMAP_API_KEY")
 
 
 class SatImg:
@@ -13,6 +14,9 @@ class SatImg:
     def __init__(self):
         self.data = []
         self.session_token = ""
+
+        self.MY_GMAP_API = os.getenv("GMAP_API_KEY")
+        self.get_session_url()
 
     def get_session_url(self):
         create_session_url = "https://tile.googleapis.com/v1/createSession"
@@ -26,20 +30,40 @@ class SatImg:
         headers = {"Content-Type": "application/json"}
 
         response = requests.post(
-            create_session_url, json=payload, headers=headers, params={"key": MY_API}
+            create_session_url,
+            json=payload,
+            headers=headers,
+            params={"key": self.MY_GMAP_API},
         )
 
         if response.status_code == 200:
-            self.sesion_token = response.json().get("session")
+            session_token = response.json().get("session")
             print("Session token:", session_token)
+            self.session_token = session_token
         else:
             print("Failed to create session:", response.text)
+            raise ValueError
 
     def get_tile(self, z, x, y):
 
-        input_url = f"https://tile.googleapis.com/v1/2dtiles/{z}/{x}/{y}?session={self.session_token}&key={MY_API}"
+        input_url = f"https://tile.googleapis.com/v1/2dtiles/{z}/{x}/{y}?session={self.session_token}&key={self.MY_GMAP_API}"
+
+        r = requests.get(input_url)
+        with open("output.png", "wb") as file:
+            file.write(r.content)
+
+    def convertLatLongToPoint(latitude, longitude, tile_size):
+        mercator = -np.log(np.tan((0.25 * lat / 360) * np.pi))
+        x = tile_size * (longitude / 360 + 0.5)
+        y = tile_size / 2 * (1 + mercator / np.pi)
+
+        return x, y
 
 
 # %%
 
-get_session_url(MY_API)
+s = SatImg()
+
+
+s.get_tile(16, 6294, 13288)
+s.convertLatLongToPoint()
