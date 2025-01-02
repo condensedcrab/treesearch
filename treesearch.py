@@ -20,6 +20,16 @@ def get_session_url(api_key):
 
     headers = {"Content-Type": "application/json"}
 
+    response = requests.post(
+        create_session_url, json=payload, headers=headers, params={"key": api_key}
+    )
+
+    if response.status_code == 200:
+        session_token = response.json().get("session")
+        print("Session token:", session_token)
+    else:
+        print("Failed to create session:", response.text)
+
     return (
         "https://tile.googleapis.com/v1/2dtiles/{z}/{x}/{y}?session="
         + session_token
