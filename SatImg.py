@@ -44,7 +44,7 @@ class SatImg:
             print("Failed to create session:", response.text)
             raise ValueError
 
-    def get_tile(self, z, x, y):
+    def get_2d_tile(self, z, x, y):
 
         input_url = f"https://tile.googleapis.com/v1/2dtiles/{z}/{x}/{y}?session={self.session_token}&key={self.MY_GMAP_API}"
 
