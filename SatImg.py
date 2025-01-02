@@ -7,12 +7,12 @@ import requests
 load_dotenv()
 MY_API = os.getenv("GMAP_API_KEY")
 
-class SatImg():
-    
+
+class SatImg:
+
     def __init__(self):
         self.data = []
         self.session_token = ""
-
 
     def get_session_url(self):
         create_session_url = "https://tile.googleapis.com/v1/createSession"
@@ -35,7 +35,9 @@ class SatImg():
         else:
             print("Failed to create session:", response.text)
 
-def get_tile()
+    def get_tile(self, z, x, y):
+
+        input_url = f"https://tile.googleapis.com/v1/2dtiles/{z}/{x}/{y}?session={self.session_token}&key={MY_API}"
 
 
 # %%
