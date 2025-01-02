@@ -53,12 +53,16 @@ class SatImg:
         with open("output.png", "wb") as file:
             file.write(r.content)
 
-    def convertLatLongToPoint(self, latitude, longitude, tile_size):
+    def convertLatLongToPoint(self, latitude, longitude, tile_size):  # TODO
         mercator = -np.log(np.tan((0.25 * latitude / 360) * np.pi))
         x = tile_size * (longitude / 360 + 0.5)
         y = tile_size / 2 * (1 + mercator / np.pi)
 
         return x, y
+
+    def get_static_map(self, lat, long, zoom):
+
+        request_url = f"https://maps.googleapis.com/maps/api/staticmap?center={lat},{long}&format=png&zoom={zoom}&size=400x400&key={self.MY_GMAP_API}"
 
 
 # %%
