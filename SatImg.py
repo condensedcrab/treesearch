@@ -76,7 +76,7 @@ class SatImg:
         request_url = f"https://maps.googleapis.com/maps/api/geocode/json?address={name_string}&key={self.MY_GMAP_API}"
 
         r = requests.get(request_url)
-
+        output = json.loads(r.content.decode("utf-8"))
         return
 
 
