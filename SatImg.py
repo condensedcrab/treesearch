@@ -16,9 +16,9 @@ class SatImg:
         self.session_token = ""
 
         self.MY_GMAP_API = os.getenv("GMAP_API_KEY")
-        self.get_session_url()
+        self.get_session_token()
 
-    def get_session_url(self):
+    def get_session_token(self):
         create_session_url = "https://tile.googleapis.com/v1/createSession"
 
         payload = {
@@ -49,11 +49,12 @@ class SatImg:
         input_url = f"https://tile.googleapis.com/v1/2dtiles/{z}/{x}/{y}?session={self.session_token}&key={self.MY_GMAP_API}"
 
         r = requests.get(input_url)
+        print(f"Response status is: {r.status_code}")
         with open("output.png", "wb") as file:
             file.write(r.content)
 
-    def convertLatLongToPoint(latitude, longitude, tile_size):
-        mercator = -np.log(np.tan((0.25 * lat / 360) * np.pi))
+    def convertLatLongToPoint(self, latitude, longitude, tile_size):
+        mercator = -np.log(np.tan((0.25 * latitude / 360) * np.pi))
         x = tile_size * (longitude / 360 + 0.5)
         y = tile_size / 2 * (1 + mercator / np.pi)
 
@@ -65,5 +66,7 @@ class SatImg:
 s = SatImg()
 
 
-s.get_tile(16, 6294, 13288)
-s.convertLatLongToPoint()
+# s.get_tile(16, 6294, 13288)
+s.convertLatLongToPoint(33.821179, -116.394663, 256)
+
+s.get_tile(15, 45, 234)
