@@ -4,9 +4,13 @@ import os
 from dotenv import load_dotenv
 import requests
 
-
 load_dotenv()
 MY_API = os.getenv("GMAP_API_KEY")
+
+class SatImg():
+    
+    def __init__(self):
+        self.data = []
 
 
 def get_session_url(api_key):
@@ -36,6 +40,10 @@ def get_session_url(api_key):
         + "&key="
         + api_key
     )
+    
+def get_tile()
 
 
 # %%
+
+get_session_url(MY_API)
