@@ -5,6 +5,8 @@ from dotenv import load_dotenv
 import requests
 import numpy as np
 import math
+import json
+
 
 load_dotenv()
 
@@ -69,8 +71,17 @@ class SatImg:
         with open(filename, "wb") as file:
             file.write(r.content)
 
+    def get_location_grid(self, name_string):
+        # name string should be format like: "Mountain View, CA", or "Thousand Palms, CA"
+        request_url = f"https://maps.googleapis.com/maps/api/geocode/json?address={name_string}&key={self.MY_GMAP_API}"
+
+        r = requests.get(request_url)
+
+        return
+
 
 # %%
 
 s = SatImg()
 s.get_static_map(33.821179, -116.394663, 22)
+s.get_location_grid("Thousand Palms, CA")
