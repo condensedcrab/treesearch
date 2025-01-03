@@ -105,25 +105,34 @@ class SatImg:
         with open(filename, "wb") as file:
             file.write(r.content)
 
-    def get_location_grid(self, name_string):
+    def get_location_grid(self, name_string, zoom_level):
         # name string should be format like: "Mountain View, CA", or "Thousand Palms, CA"
         request_url = f"https://maps.googleapis.com/maps/api/geocode/json?address={name_string}&key={self.MY_GMAP_API}"
 
         r = requests.get(request_url)
         output = json.loads(r.content.decode("utf-8"))
 
+        # grab bounds from json structure
+        grid_start = output["results"][0]["geometry"]["bounds"]["southwest"]
+        grid_end = output["results"][0]["geometry"]["bounds"]["northeast"]
+
+        # grab the tile locations to generate grid
+        [x1, y1] = self.convertLatLongToTileCoord(
+            grid_start["lat"], grid_start["lng"], zoom_level
+        )
+        [x2, y2] = self.convertLatLongToTileCoord(
+            grid_end["lat"], grid_end["lng"], zoom_level
+        )
         return
 
 
 # %%
 zoom_lvl = 19
 s = SatImg()
-# s.get_static_map(33.821179, -116.394663, 18)
-# s.get_static_map(33.813278287410995, -116.38493583152912, 18)
-# s.get_location_grid("Thousand Palms, CA")
 
-output = s.convertLatLongToTileCoord(41.85, -87.65, zoom_lvl)
-output = s.convertLatLongToTileCoord(33.821179, -116.394663, zoom_lvl)
+s.get_location_grid("Thousand Palms, CA", zoom_lvl)
 
-for i in range(0, 4):
-    s.get_2d_tile(zoom_lvl, output[0] + i, output[1])
+# output = s.convertLatLongToTileCoord(33.821179, -116.394663, zoom_lvl)
+
+# for i in range(0, 4):
+#     s.get_2d_tile(zoom_lvl, output[0] + i, output[1])
