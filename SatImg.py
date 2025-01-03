@@ -50,6 +50,10 @@ class SatImg:
     def get_2d_tile(self, z, x, y):
         # gets tile (not pixel)
 
+        # verify that x and y are ints
+        x = int(x)
+        y = int(y)
+
         input_url = f"https://tile.googleapis.com/v1/2dtiles/{z}/{x}/{y}?session={self.session_token}&key={self.MY_GMAP_API}"
 
         r = requests.get(input_url)
@@ -130,11 +134,15 @@ class SatImg:
 
         # now construct the grid from (x1,y1) to (x2,y2)
         grid_list = np.zeros((len_x * len_y, 2))
-        counter = 0
-        for idx_x in range(x1, x2):
-            for idx_y in range(y1, y2, -1):
-                grid_list[counter, :] = [idx_x, idx_y]
-                counter += 1
+
+        if grid_list.shape[0] > 5000:
+            raise Exception
+        else:
+            counter = 0
+            for idx_x in range(x1, x2):
+                for idx_y in range(y1, y2, -1):
+                    grid_list[counter, :] = [idx_x, idx_y]
+                    counter += 1
 
         return grid_list
 
@@ -147,10 +155,13 @@ class SatImg:
 
 
 # %%
-zoom_lvl = 10
+zoom_lvl = 15
+town_name = "Thousand Palms, CA"
 s = SatImg()
 
-g = s.get_location_grid("Thousand Palms, CA", zoom_lvl)
+# g = s.generate_location_grid(town_name, zoom_lvl)
+
+s.get_grid_images(town_name, zoom_lvl)
 
 
 # output = s.convertLatLongToTileCoord(33.821179, -116.394663, zoom_lvl)
