@@ -149,9 +149,9 @@ class SatImg:
     def get_grid_images(self, name_string, zoom_level=12):
         tile_grid = self.generate_location_grid(name_string, zoom_level)
 
-        for tile in tile_grid:
+        for idx, tile in enumerate(tile_grid):
             self.get_2d_tile(zoom_level, tile[0], tile[1])
-            print(f"Tile location: {tile[0]}, {tile[1]}")
+            print(f"Tile {idx}: {tile[0]}, {tile[1]}")
 
 
 # %%
