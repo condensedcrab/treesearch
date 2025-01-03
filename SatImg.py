@@ -58,23 +58,25 @@ class SatImg:
         with open(filename, "wb") as file:
             file.write(r.content)
 
-    def convertLatLongToPoint(self, latitude, longitude, tile_size):  # TODO
+    def convertLatLongToPoint(self, latitude, longitude):  # TODO
+        TILE_SIZE = 256
         # ref: https://gis.stackexchange.com/questions/7430/what-ratio-scales-do-google-maps-zoom-levels-correspond-to
         # ref: https://groups.google.com/g/google-maps-js-api-v3/c/
         # ref: https://developers.google.com/maps/documentation/javascript/examples/map-coordinates
         siny = np.sin(latitude * np.pi / 180)
         # these are the world coordinates in the language of gmaps
-        x = int(tile_size * (longitude / 360 + 0.5))
-        y = int(tile_size * (0.5 - np.log((1 + siny) / (1 - siny)) / (4 * np.pi)))
+        x = int(TILE_SIZE * (longitude / 360 + 0.5))
+        y = int(TILE_SIZE * (0.5 - np.log((1 + siny) / (1 - siny)) / (4 * np.pi)))
 
         return x, y
 
-    def convertLatLongToTileCoord(self, latitude, longitude, tile_size, zoom):
-        point = self.convertLatLongToPoint(latitude, longitude, tile_size)
+    def convertLatLongToTileCoord(self, latitude, longitude, zoom):
+        TILE_SIZE = 256
+        point = self.convertLatLongToPoint(latitude, longitude, TILE_SIZE)
         scale = 2**zoom
 
-        x = int(np.floor(point[0] * scale / tile_size))
-        y = int(np.floor(point[1] * scale / tile_size))
+        x = int(np.floor(point[0] * scale / TILE_SIZE))
+        y = int(np.floor(point[1] * scale / TILE_SIZE))
 
         # pixelCoordinate = worldCoordinate * 2zoomLevel
         return x, y
@@ -114,5 +116,5 @@ for i in range(0, 4):
 
 # %%
 
-s.convertLatLongToPoint(41.85, -87.65, 256)
-s.convertLatLongToTileCoord(41.85, -87.65, 256, 19)
+s.convertLatLongToPoint(41.85, -87.65)
+s.convertLatLongToTileCoord(41.85, -87.65, 19)
