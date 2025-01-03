@@ -87,12 +87,13 @@ class SatImg:
 
     def convertToPixelCoord(self, lat, long, zoom):
         TILE_SIZE = self.TILE_SIZE
-        world_coord = convertLatLongToWorldCoord(lat, long)
+        world_coord = self.convertLatLongToWorldCoord(lat, long)
 
         scale = 2**zoom
-        pixel_coord = np.round(world_coord / scale)
+        pixel_x = np.round(world_coord[0] / scale)
+        pixel_y = np.round(world_coord[1] / scale)
 
-        return pixel_coord
+        return pixel_x, pixel_y
 
     def get_static_map(self, lat, long, zoom):
 
