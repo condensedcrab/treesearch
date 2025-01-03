@@ -84,5 +84,6 @@ class SatImg:
 # %%
 
 s = SatImg()
-s.get_static_map(33.821179, -116.394663, 24)
+s.get_static_map(33.821179, -116.394663, 18)
+s.get_static_map(33.813278287410995, -116.38493583152912, 18)
 s.get_location_grid("Thousand Palms, CA")
