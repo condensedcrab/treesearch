@@ -58,10 +58,20 @@ class SatImg:
     def convertLatLongToPoint(self, latitude, longitude, tile_size):  # TODO
         # ref: https://gis.stackexchange.com/questions/7430/what-ratio-scales-do-google-maps-zoom-levels-correspond-to
         # ref: https://groups.google.com/g/google-maps-js-api-v3/c/
-        mercator = -np.log(np.tan((0.25 * latitude / 360) * np.pi))
+        # ref: https://developers.google.com/maps/documentation/javascript/examples/map-coordinates
+        siny = np.sin(latitude * np.pi / 180)
+        # these are the world coordinates in the language of gmaps
         x = tile_size * (longitude / 360 + 0.5)
-        y = tile_size / 2 * (1 + mercator / np.pi)
+        y = tile_size * (0.5 - np.log((1 + siny) / (1 - siny)) / (4 * np.pi))
 
+        return x, y
+
+    def convertLatLongToTileCoord(self, latitude, longitude, tile_size, zoom):
+        point = self.convertLatLongToPoint(latitude, longitude, tile_size)
+        scale = 2**zoom
+
+        x = np.floor(point[0] * scale / tile_size)
+        y = np.floor(point[1] * scale / tile_size)
         return x, y
 
     def get_static_map(self, lat, long, zoom):
@@ -93,3 +103,4 @@ s = SatImg()
 # %%
 
 s.convertLatLongToPoint(41.85, -87.65, 256)
+s.convertLatLongToTileCoord(41.85, -87.65, 256, 19)
