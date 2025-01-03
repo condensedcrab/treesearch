@@ -91,7 +91,6 @@ class SatImg:
         return tile_x, tile_y
 
     def convertToPixelCoord(self, lat, long, zoom):
-        TILE_SIZE = self.TILE_SIZE
         world_coord = self.convertLatLongToWorldCoord(lat, long)
 
         scale = 2**zoom
@@ -136,18 +135,18 @@ class SatImg:
         grid_list = np.zeros((len_x * len_y, 2))
 
         if grid_list.shape[0] > 5000:
-            raise Warning("More than 5000 tiles requested")
-        else:
-            counter = 0
-            for idx_x in range(x1, x2):
-                for idx_y in range(y1, y2, -1):
-                    grid_list[counter, :] = [idx_x, idx_y]
-                    counter += 1
+            Warning("More than 5000 tiles requested")
+
+        counter = 0
+        for idx_x in range(x1, x2):
+            for idx_y in range(y1, y2, -1):
+                grid_list[counter, :] = [idx_x, idx_y]
+                counter += 1
 
         return grid_list
 
     def get_grid_images(self, name_string, zoom_level=12):
-        max_tiles = 10000
+        max_tiles = 50
         tile_grid = self.generate_location_grid(name_string, zoom_level)
 
         tile_counter = 0
@@ -162,16 +161,17 @@ class SatImg:
 
 
 # %%
-zoom_lvl = 22
+zoom_lvl = 21
 town_name = "Thousand Palms, CA"
 s = SatImg()
 
 # g = s.generate_location_grid(town_name, zoom_lvl)
 
-s.get_grid_images(town_name, zoom_lvl)
+# s.get_grid_images(town_name, zoom_lvl)
 
 
-# output = s.convertLatLongToTileCoord(33.821179, -116.394663, zoom_lvl)
+output = s.get_static_map(33.821179, -116.394663, zoom_lvl)
+output = s.get_static_map(33.821179, -116.394663, zoom_lvl)
 
 # for i in range(0, 4):
 #     s.get_2d_tile(zoom_lvl, output[0] + i, output[1])
