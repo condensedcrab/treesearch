@@ -105,7 +105,7 @@ class SatImg:
         with open(filename, "wb") as file:
             file.write(r.content)
 
-    def generate_location_grid(self, name_string, zoom_level):
+    def generate_location_grid(self, name_string, zoom_level=12):
         # name string should be format like: "Mountain View, CA", or "Thousand Palms, CA"
         request_url = f"https://maps.googleapis.com/maps/api/geocode/json?address={name_string}&key={self.MY_GMAP_API}"
 
@@ -137,9 +137,13 @@ class SatImg:
                 counter += 1
 
         return grid_list
-    
-    def get_grid_images(self,grid_list):
-        
+
+    def get_grid_images(self, name_string, zoom_level=12):
+        tile_grid = self.generate_location_grid(name_string, zoom_level)
+
+        for tile in tile_grid:
+            self.get_2d_tile(zoom_level, tile[0], tile[1])
+            print(f"Tile location: {tile[0]}, {tile[1]}")
 
 
 # %%
