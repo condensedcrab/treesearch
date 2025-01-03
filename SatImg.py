@@ -90,8 +90,8 @@ class SatImg:
         world_coord = self.convertLatLongToWorldCoord(lat, long)
 
         scale = 2**zoom
-        pixel_x = np.round(world_coord[0] / scale)
-        pixel_y = np.round(world_coord[1] / scale)
+        pixel_x = np.round(world_coord[0] * scale)
+        pixel_y = np.round(world_coord[1] * scale)
 
         return pixel_x, pixel_y
 
