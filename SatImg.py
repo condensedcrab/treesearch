@@ -51,7 +51,9 @@ class SatImg:
         input_url = f"https://tile.googleapis.com/v1/2dtiles/{z}/{x}/{y}?session={self.session_token}&key={self.MY_GMAP_API}"
 
         r = requests.get(input_url)
-        print(f"Response status is: {r.status_code}")
+
+        if r.status_code != 200:
+            print(r.content)
         filename = f"data/x_{x}_y_{y}_z_{z}.png"
         with open(filename, "wb") as file:
             file.write(r.content)
@@ -73,6 +75,8 @@ class SatImg:
 
         x = int(np.floor(point[0] * scale / tile_size))
         y = int(np.floor(point[1] * scale / tile_size))
+
+        # pixelCoordinate = worldCoordinate * 2zoomLevel
         return x, y
 
     def get_static_map(self, lat, long, zoom):
@@ -95,16 +99,18 @@ class SatImg:
 
 
 # %%
-
+zoom_lvl = 5
 s = SatImg()
 # s.get_static_map(33.821179, -116.394663, 18)
 # s.get_static_map(33.813278287410995, -116.38493583152912, 18)
 # s.get_location_grid("Thousand Palms, CA")
 
-output = s.convertLatLongToTileCoord(33.813278287410995, -116.38493583152912, 256, 19)
+output = s.convertLatLongToTileCoord(
+    33.813278287410995, -116.38493583152912, 256, zoom_lvl
+)
 
 for i in range(0, 10):
-    s.get_2d_tile(19, output[0] + i, output[1])
+    s.get_2d_tile(zoom_lvl, output[0] + i, output[1])
 
 # %%
 
