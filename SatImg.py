@@ -52,7 +52,8 @@ class SatImg:
 
         r = requests.get(input_url)
         print(f"Response status is: {r.status_code}")
-        with open("output.png", "wb") as file:
+        filename = f"data/x_{x}_y_{y}_z_{z}.png"
+        with open(filename, "wb") as file:
             file.write(r.content)
 
     def convertLatLongToPoint(self, latitude, longitude, tile_size):  # TODO
@@ -61,8 +62,8 @@ class SatImg:
         # ref: https://developers.google.com/maps/documentation/javascript/examples/map-coordinates
         siny = np.sin(latitude * np.pi / 180)
         # these are the world coordinates in the language of gmaps
-        x = tile_size * (longitude / 360 + 0.5)
-        y = tile_size * (0.5 - np.log((1 + siny) / (1 - siny)) / (4 * np.pi))
+        x = int(tile_size * (longitude / 360 + 0.5))
+        y = int(tile_size * (0.5 - np.log((1 + siny) / (1 - siny)) / (4 * np.pi)))
 
         return x, y
 
@@ -70,8 +71,8 @@ class SatImg:
         point = self.convertLatLongToPoint(latitude, longitude, tile_size)
         scale = 2**zoom
 
-        x = np.floor(point[0] * scale / tile_size)
-        y = np.floor(point[1] * scale / tile_size)
+        x = int(np.floor(point[0] * scale / tile_size))
+        y = int(np.floor(point[1] * scale / tile_size))
         return x, y
 
     def get_static_map(self, lat, long, zoom):
@@ -99,6 +100,11 @@ s = SatImg()
 # s.get_static_map(33.821179, -116.394663, 18)
 # s.get_static_map(33.813278287410995, -116.38493583152912, 18)
 # s.get_location_grid("Thousand Palms, CA")
+
+output = s.convertLatLongToTileCoord(33.813278287410995, -116.38493583152912, 256, 19)
+
+for i in range(0, 10):
+    s.get_2d_tile(19, output[0] + i, output[1])
 
 # %%
 
