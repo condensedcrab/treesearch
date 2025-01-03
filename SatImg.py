@@ -59,8 +59,8 @@ class SatImg:
         with open(filename, "wb") as file:
             file.write(r.content)
 
-    def convertLatLongToPoint(self, latitude, longitude):  # TODO
-        TILE_SIZE = 256
+    def convertLatLongToWorldCoord(self, latitude, longitude):  # TODO
+        TILE_SIZE = self.TILE_SIZE
 
         # ref: https://gis.stackexchange.com/questions/7430/what-ratio-scales-do-google-maps-zoom-levels-correspond-to
         # ref: https://groups.google.com/g/google-maps-js-api-v3/c/
@@ -75,7 +75,7 @@ class SatImg:
         return x, y
 
     def convertLatLongToTileCoord(self, latitude, longitude, zoom):
-        TILE_SIZE = 256
+        TILE_SIZE = self.TILE_SIZE
         point = self.convertLatLongToPoint(latitude, longitude)
         scale = 2**zoom
 
