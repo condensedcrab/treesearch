@@ -65,11 +65,11 @@ class SatImg:
         # ref: https://groups.google.com/g/google-maps-js-api-v3/c/
         # ref: https://developers.google.com/maps/documentation/javascript/examples/map-coordinates
         siny = np.sin(latitude * np.pi / 180)
-        mercator = -np.log(np.tan(0.25 + latitude / 360) * np.pi)
+        # mercator = -np.log(np.tan(0.25 + latitude / 360) * np.pi)
         # these are the world coordinates in the language of gmaps
         x = TILE_SIZE * (longitude / 360 + 0.5)
         y = TILE_SIZE * (0.5 - np.log((1 + siny) / (1 - siny)) / (4 * np.pi))
-        y = TILE_SIZE / 2 * (1 + mercator / np.pi)
+        # y = TILE_SIZE / 2 * (1 + mercator / np.pi)
 
         return x, y
 
