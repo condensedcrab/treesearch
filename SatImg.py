@@ -90,8 +90,8 @@ class SatImg:
         world_coord = self.convertLatLongToWorldCoord(lat, long)
 
         scale = 2**zoom
-        pixel_x = np.round(world_coord[0] * scale)
-        pixel_y = np.round(world_coord[1] * scale)
+        pixel_x = int(np.round(world_coord[0] * scale))
+        pixel_y = int(np.round(world_coord[1] * scale))
 
         return pixel_x, pixel_y
 
@@ -115,7 +115,7 @@ class SatImg:
 
 
 # %%
-zoom_lvl = 10
+zoom_lvl = 16
 s = SatImg()
 # s.get_static_map(33.821179, -116.394663, 18)
 # s.get_static_map(33.813278287410995, -116.38493583152912, 18)
@@ -124,10 +124,5 @@ s = SatImg()
 output = s.convertLatLongToTileCoord(41.85, -87.65, zoom_lvl)
 output = s.convertToPixelCoord(41.85, -87.65, zoom_lvl)
 
-# for i in range(0, 4):
-#     s.get_2d_tile(zoom_lvl, output[0] + i, output[1])
-
-# %%
-
-s.convertLatLongToPoint(41.85, -87.65)
-s.convertLatLongToTileCoord(41.85, -87.65, 19)
+for i in range(0, 4):
+    s.get_2d_tile(zoom_lvl, output[0] + i, output[1])
