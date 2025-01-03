@@ -155,7 +155,7 @@ class SatImg:
 
 
 # %%
-zoom_lvl = 15
+zoom_lvl = 19
 town_name = "Thousand Palms, CA"
 s = SatImg()
 
