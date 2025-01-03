@@ -56,6 +56,8 @@ class SatImg:
             file.write(r.content)
 
     def convertLatLongToPoint(self, latitude, longitude, tile_size):  # TODO
+        # ref: https://gis.stackexchange.com/questions/7430/what-ratio-scales-do-google-maps-zoom-levels-correspond-to
+        # ref: https://groups.google.com/g/google-maps-js-api-v3/c/
         mercator = -np.log(np.tan((0.25 * latitude / 360) * np.pi))
         x = tile_size * (longitude / 360 + 0.5)
         y = tile_size / 2 * (1 + mercator / np.pi)
@@ -84,6 +86,10 @@ class SatImg:
 # %%
 
 s = SatImg()
-s.get_static_map(33.821179, -116.394663, 18)
-s.get_static_map(33.813278287410995, -116.38493583152912, 18)
-s.get_location_grid("Thousand Palms, CA")
+# s.get_static_map(33.821179, -116.394663, 18)
+# s.get_static_map(33.813278287410995, -116.38493583152912, 18)
+# s.get_location_grid("Thousand Palms, CA")
+
+# %%
+
+s.convertLatLongToPoint(41.85, -87.65, 256)
