@@ -64,7 +64,7 @@ class SatImg:
 
     def get_static_map(self, lat, long, zoom):
 
-        request_url = f"https://maps.googleapis.com/maps/api/staticmap?center={lat},{long}&format=png&zoom={zoom}&size=400x400&maptype=satellite&key={self.MY_GMAP_API}"
+        request_url = f"https://maps.googleapis.com/maps/api/staticmap?center={lat},{long}&format=png&zoom={zoom}&size=600x600&maptype=satellite&key={self.MY_GMAP_API}"
         r = requests.get(request_url)
         print(f"Response status is: {r.status_code}")
         filename = f"data/lat_{lat}_long_{long}_zoom_{zoom}.png"
@@ -77,11 +77,12 @@ class SatImg:
 
         r = requests.get(request_url)
         output = json.loads(r.content.decode("utf-8"))
+
         return
 
 
 # %%
 
 s = SatImg()
-s.get_static_map(33.821179, -116.394663, 22)
+s.get_static_map(33.821179, -116.394663, 24)
 s.get_location_grid("Thousand Palms, CA")
