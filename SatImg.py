@@ -16,6 +16,7 @@ class SatImg:
     def __init__(self):
         self.data = []
         self.session_token = ""
+        self.TILE_SIZE = 256 # pixels
 
         self.MY_GMAP_API = os.getenv("GMAP_API_KEY")
         self.get_session_token()
@@ -83,6 +84,9 @@ class SatImg:
 
         # pixelCoordinate = worldCoordinate * 2zoomLevel
         return x, y
+    
+    def convertToPixelCoord(self,tile_x,tile_y)
+        TILE_SIZE = self.TILE_SIZE
 
     def get_static_map(self, lat, long, zoom):
 
