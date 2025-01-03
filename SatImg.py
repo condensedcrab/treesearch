@@ -16,7 +16,7 @@ class SatImg:
     def __init__(self):
         self.data = []
         self.session_token = ""
-        self.TILE_SIZE = 256 # pixels
+        self.TILE_SIZE = 256  # pixels
 
         self.MY_GMAP_API = os.getenv("GMAP_API_KEY")
         self.get_session_token()
@@ -68,25 +68,31 @@ class SatImg:
         siny = np.sin(latitude * np.pi / 180)
         # mercator = -np.log(np.tan(0.25 + latitude / 360) * np.pi)
         # these are the world coordinates in the language of gmaps
-        x = TILE_SIZE * (longitude / 360 + 0.5)
-        y = TILE_SIZE * (0.5 - np.log((1 + siny) / (1 - siny)) / (4 * np.pi))
+        world_x = TILE_SIZE * (longitude / 360 + 0.5)
+        world_y = TILE_SIZE * (0.5 - np.log((1 + siny) / (1 - siny)) / (4 * np.pi))
         # y = TILE_SIZE / 2 * (1 + mercator / np.pi)
 
-        return x, y
+        return world_x, world_y
 
     def convertLatLongToTileCoord(self, latitude, longitude, zoom):
         TILE_SIZE = self.TILE_SIZE
-        point = self.convertLatLongToPoint(latitude, longitude)
+        point = self.convertLatLongToWorldCoord(latitude, longitude)
         scale = 2**zoom
 
-        x = int(np.floor(point[0] * scale / TILE_SIZE))
-        y = int(np.floor(point[1] * scale / TILE_SIZE))
+        tile_x = int(np.floor(point[0] * scale / TILE_SIZE))
+        tile_y = int(np.floor(point[1] * scale / TILE_SIZE))
 
         # pixelCoordinate = worldCoordinate * 2zoomLevel
-        return x, y
-    
-    def convertToPixelCoord(self,tile_x,tile_y)
+        return tile_x, tile_y
+
+    def convertToPixelCoord(self, lat, long, zoom):
         TILE_SIZE = self.TILE_SIZE
+        world_coord = convertLatLongToWorldCoord(lat, long)
+
+        scale = 2**zoom
+        pixel_coord = np.round(world_coord / scale)
+
+        return pixel_coord
 
     def get_static_map(self, lat, long, zoom):
 
@@ -115,9 +121,10 @@ s = SatImg()
 # s.get_location_grid("Thousand Palms, CA")
 
 output = s.convertLatLongToTileCoord(41.85, -87.65, zoom_lvl)
+output = s.convertToPixelCoord(41.85, -87.65, zoom_lvl)
 
-for i in range(0, 4):
-    s.get_2d_tile(zoom_lvl, output[0] + i, output[1])
+# for i in range(0, 4):
+#     s.get_2d_tile(zoom_lvl, output[0] + i, output[1])
 
 # %%
 
