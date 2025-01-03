@@ -60,19 +60,22 @@ class SatImg:
 
     def convertLatLongToPoint(self, latitude, longitude):  # TODO
         TILE_SIZE = 256
+
         # ref: https://gis.stackexchange.com/questions/7430/what-ratio-scales-do-google-maps-zoom-levels-correspond-to
         # ref: https://groups.google.com/g/google-maps-js-api-v3/c/
         # ref: https://developers.google.com/maps/documentation/javascript/examples/map-coordinates
         siny = np.sin(latitude * np.pi / 180)
+        mercator = -np.log(np.tan(0.25 + latitude / 360) * np.pi)
         # these are the world coordinates in the language of gmaps
         x = int(TILE_SIZE * (longitude / 360 + 0.5))
         y = int(TILE_SIZE * (0.5 - np.log((1 + siny) / (1 - siny)) / (4 * np.pi)))
+        y = int(TILE_SIZE / 2 * (1 + mercator / np.pi))
 
         return x, y
 
     def convertLatLongToTileCoord(self, latitude, longitude, zoom):
         TILE_SIZE = 256
-        point = self.convertLatLongToPoint(latitude, longitude, TILE_SIZE)
+        point = self.convertLatLongToPoint(latitude, longitude)
         scale = 2**zoom
 
         x = int(np.floor(point[0] * scale / TILE_SIZE))
@@ -107,9 +110,7 @@ s = SatImg()
 # s.get_static_map(33.813278287410995, -116.38493583152912, 18)
 # s.get_location_grid("Thousand Palms, CA")
 
-output = s.convertLatLongToTileCoord(
-    33.813278287410995, -116.38493583152912, 256, zoom_lvl
-)
+output = s.convertLatLongToTileCoord(33.813278287410995, -116.38493583152912, zoom_lvl)
 
 for i in range(0, 4):
     s.get_2d_tile(zoom_lvl, output[0] + i, output[1])
