@@ -48,6 +48,7 @@ class SatImg:
             raise ValueError
 
     def get_2d_tile(self, z, x, y):
+        # gets tile (not pixel)
 
         input_url = f"https://tile.googleapis.com/v1/2dtiles/{z}/{x}/{y}?session={self.session_token}&key={self.MY_GMAP_API}"
 
@@ -115,14 +116,14 @@ class SatImg:
 
 
 # %%
-zoom_lvl = 16
+zoom_lvl = 19
 s = SatImg()
 # s.get_static_map(33.821179, -116.394663, 18)
 # s.get_static_map(33.813278287410995, -116.38493583152912, 18)
 # s.get_location_grid("Thousand Palms, CA")
 
 output = s.convertLatLongToTileCoord(41.85, -87.65, zoom_lvl)
-output = s.convertToPixelCoord(41.85, -87.65, zoom_lvl)
+output = s.convertLatLongToTileCoord(33.821179, -116.394663, zoom_lvl)
 
 for i in range(0, 4):
     s.get_2d_tile(zoom_lvl, output[0] + i, output[1])
