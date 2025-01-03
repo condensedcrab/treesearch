@@ -136,7 +136,7 @@ class SatImg:
         grid_list = np.zeros((len_x * len_y, 2))
 
         if grid_list.shape[0] > 5000:
-            raise Exception
+            raise Warning("More than 5000 tiles requested")
         else:
             counter = 0
             for idx_x in range(x1, x2):
@@ -147,15 +147,22 @@ class SatImg:
         return grid_list
 
     def get_grid_images(self, name_string, zoom_level=12):
+        max_tiles = 10000
         tile_grid = self.generate_location_grid(name_string, zoom_level)
 
+        tile_counter = 0
         for idx, tile in enumerate(tile_grid):
             self.get_2d_tile(zoom_level, tile[0], tile[1])
             print(f"Tile {idx}: {tile[0]}, {tile[1]}")
 
+            tile_counter += 1
+            if tile_counter >= max_tiles:
+                raise Warning("More than 10k tiles reached, terminating.")
+                break
+
 
 # %%
-zoom_lvl = 19
+zoom_lvl = 22
 town_name = "Thousand Palms, CA"
 s = SatImg()
 
