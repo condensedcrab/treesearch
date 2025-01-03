@@ -105,7 +105,7 @@ class SatImg:
         with open(filename, "wb") as file:
             file.write(r.content)
 
-    def get_location_grid(self, name_string, zoom_level):
+    def generate_location_grid(self, name_string, zoom_level):
         # name string should be format like: "Mountain View, CA", or "Thousand Palms, CA"
         request_url = f"https://maps.googleapis.com/maps/api/geocode/json?address={name_string}&key={self.MY_GMAP_API}"
 
@@ -123,14 +123,31 @@ class SatImg:
         [x2, y2] = self.convertLatLongToTileCoord(
             grid_end["lat"], grid_end["lng"], zoom_level
         )
-        return
+
+        # should be positive values for length
+        len_x = x2 - x1
+        len_y = y1 - y2
+
+        # now construct the grid from (x1,y1) to (x2,y2)
+        grid_list = np.zeros((len_x * len_y, 2))
+        counter = 0
+        for idx_x in range(x1, x2):
+            for idx_y in range(y1, y2, -1):
+                grid_list[counter, :] = [idx_x, idx_y]
+                counter += 1
+
+        return grid_list
+    
+    def get_grid_images(self,grid_list):
+        
 
 
 # %%
-zoom_lvl = 19
+zoom_lvl = 10
 s = SatImg()
 
-s.get_location_grid("Thousand Palms, CA", zoom_lvl)
+g = s.get_location_grid("Thousand Palms, CA", zoom_lvl)
+
 
 # output = s.convertLatLongToTileCoord(33.821179, -116.394663, zoom_lvl)
 
