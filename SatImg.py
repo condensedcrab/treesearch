@@ -99,7 +99,7 @@ class SatImg:
 
 
 # %%
-zoom_lvl = 5
+zoom_lvl = 10
 s = SatImg()
 # s.get_static_map(33.821179, -116.394663, 18)
 # s.get_static_map(33.813278287410995, -116.38493583152912, 18)
@@ -109,7 +109,7 @@ output = s.convertLatLongToTileCoord(
     33.813278287410995, -116.38493583152912, 256, zoom_lvl
 )
 
-for i in range(0, 10):
+for i in range(0, 4):
     s.get_2d_tile(zoom_lvl, output[0] + i, output[1])
 
 # %%
