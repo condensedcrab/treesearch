@@ -185,18 +185,18 @@ a = s.convertToPixelCoord(coords[0], coords[1], zoom_lvl)
 
 img_size = 600  # pixels
 
-lat_range = np.linspace(coords[0], coords[0] + 0.1, 10000)
+lat_range = np.linspace(coords[1], coords[1] + 0.05, 1000)
 
 for l in lat_range:
-    c = s.convertToPixelCoord(l, coords[1], zoom_lvl)
+    c = s.convertToPixelCoord(coords[0], l, zoom_lvl)
     print(c)
     print(
-        f"Coord is: {l:.6f}, pixel lat is: {c[1]}, and pixel difference is: {np.abs(c[1]-a[1])}"
+        f"Coord is: {l:.6f}, pixel lat is: {c[0]}, and pixel difference is: {np.abs(c[0]-a[0])}"
     )
 
-    if np.abs(c[1] - a[1]) >= 580 and np.abs(c[1] - a[1]) <= 620:
+    if np.abs(c[0] - a[0]) >= 580 and np.abs(c[0] - a[0]) <= 620:
         break
 
-print(f"Latitude spacing for the grid is: {(l-coords[0]):.3e}")
+print(f"Latitude spacing for the grid is: {(l-coords[1]):.3e}")
 
 # %%
