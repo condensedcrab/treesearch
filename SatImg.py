@@ -116,7 +116,7 @@ class SatImg:
 
         request_url = f"https://maps.googleapis.com/maps/api/staticmap?center={lat},{long}&format=png&zoom={zoom}&size=600x600&maptype=satellite&key={self.MY_GMAP_API}"
         r = requests.get(request_url)
-        print(f"Response status is: {r.status_code}")
+        # print(f"Response status is: {r.status_code}")
 
         with open(filename, "wb") as file:
             file.write(r.content)
@@ -180,11 +180,16 @@ class SatImg:
         if ny % 2 == 1:
             ny -= 1
 
+        counter = 0
         for x in range(-nx // 2, nx // 2):
             for y in range(-nx // 2, nx // 2):
                 self.get_static_map(
                     lat + x * grid_spacing[0], long + y * grid_spacing[1], zoom
                 )
+                print(
+                    f"Tile: {counter}/{nx*ny}: Lat: {lat + x * grid_spacing[0]:.6f}, Long: {long + y * grid_spacing[1]:.6f}"
+                )
+                counter += 1
 
 
 # %%
