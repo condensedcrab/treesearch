@@ -134,8 +134,8 @@ class SatImg:
         # now construct the grid from (x1,y1) to (x2,y2)
         grid_list = np.zeros((len_x * len_y, 2))
 
-        if grid_list.shape[0] > 5000:
-            Warning("More than 5000 tiles requested")
+        if grid_list.shape[0] > 2500:
+            raise ValueError("Too many tiles requested")
 
         counter = 0
         for idx_x in range(x1, x2):
@@ -159,6 +159,7 @@ class SatImg:
                 raise Warning("More than 10k tiles reached, terminating.")
                 break
 
+    def get 
 
 # %%
 zoom_lvl = 21
@@ -177,26 +178,5 @@ output = s.convertToPixelCoord(33.821179, -116.394663, zoom_lvl)
 # for i in range(0, 4):
 #     s.get_2d_tile(zoom_lvl, output[0] + i, output[1])
 
-# %% test region
-zoom_lvl = 20
-coords = [33.821179, -116.394663]
-
-a = s.convertToPixelCoord(coords[0], coords[1], zoom_lvl)
-
-img_size = 600  # pixels
-
-lat_range = np.linspace(coords[1], coords[1] + 0.05, 1000)
-
-for l in lat_range:
-    c = s.convertToPixelCoord(coords[0], l, zoom_lvl)
-    print(c)
-    print(
-        f"Coord is: {l:.6f}, pixel lat is: {c[0]}, and pixel difference is: {np.abs(c[0]-a[0])}"
-    )
-
-    if np.abs(c[0] - a[0]) >= 580 and np.abs(c[0] - a[0]) <= 620:
-        break
-
-print(f"Latitude spacing for the grid is: {(l-coords[1]):.3e}")
 
 # %%
