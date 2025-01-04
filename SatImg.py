@@ -6,6 +6,7 @@ import requests
 import numpy as np
 import math
 import json
+import glob
 
 
 load_dotenv()
@@ -100,11 +101,23 @@ class SatImg:
         return pixel_x, pixel_y
 
     def get_static_map(self, lat, long, zoom):
+        flag_cached = False
+        filename = f"data/lat_{lat:.6f}_long_{long:.6f}_zoom_{zoom}.png"
+
+        # check if file is cached
+        prev_files = glob.glob("data/*.png")
+        for imgs in prev_files:
+            if filename in imgs:
+                print("Image already cached")
+                flag_cached = True
+
+        if flag_cached:
+            return
 
         request_url = f"https://maps.googleapis.com/maps/api/staticmap?center={lat},{long}&format=png&zoom={zoom}&size=600x600&maptype=satellite&key={self.MY_GMAP_API}"
         r = requests.get(request_url)
         print(f"Response status is: {r.status_code}")
-        filename = f"data/lat_{lat}_long_{long}_zoom_{zoom}.png"
+
         with open(filename, "wb") as file:
             file.write(r.content)
 
@@ -159,7 +172,20 @@ class SatImg:
                 raise Warning("More than 10k tiles reached, terminating.")
                 break
 
-    def get 
+    def get_static_grid(self, lat, long, nx, ny, zoom=20):
+        grid_spacing = [6.5e-4, 8e-4]
+
+        if nx % 2 == 1:
+            nx -= 1
+        if ny % 2 == 1:
+            ny -= 1
+
+        for x in range(-nx // 2, nx // 2):
+            for y in range(-nx // 2, nx // 2):
+                self.get_static_map(
+                    lat + x * grid_spacing[0], long + y * grid_spacing[1], zoom
+                )
+
 
 # %%
 zoom_lvl = 21
@@ -172,11 +198,14 @@ s = SatImg()
 
 output = s.convertToPixelCoord(33.821179, -116.394663, zoom_lvl)
 
+
 # output = s.get_static_map(33.821179, -116.394663, zoom_lvl)
 # output = s.get_static_map(33.821179, -116.394663, zoom_lvl)
 
 # for i in range(0, 4):
 #     s.get_2d_tile(zoom_lvl, output[0] + i, output[1])
 
+# use coordinate spacing to construct grid
+s.get_static_grid(33.821179, -116.394663, 25, 25)
 
 # %%
