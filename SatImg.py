@@ -171,10 +171,32 @@ s = SatImg()
 
 output = s.convertToPixelCoord(33.821179, -116.394663, zoom_lvl)
 
-output = s.get_static_map(33.821179, -116.394663, zoom_lvl)
-output = s.get_static_map(33.821179, -116.394663, zoom_lvl)
+# output = s.get_static_map(33.821179, -116.394663, zoom_lvl)
+# output = s.get_static_map(33.821179, -116.394663, zoom_lvl)
 
 # for i in range(0, 4):
 #     s.get_2d_tile(zoom_lvl, output[0] + i, output[1])
 
 # %% test region
+zoom_lvl = 20
+coords = [33.821179, -116.394663]
+
+a = s.convertToPixelCoord(coords[0], coords[1], zoom_lvl)
+
+img_size = 600  # pixels
+
+lat_range = np.linspace(coords[0], coords[0] + 0.1, 10000)
+
+for l in lat_range:
+    c = s.convertToPixelCoord(l, coords[1], zoom_lvl)
+    print(c)
+    print(
+        f"Coord is: {l:.6f}, pixel lat is: {c[1]}, and pixel difference is: {np.abs(c[1]-a[1])}"
+    )
+
+    if np.abs(c[1] - a[1]) >= 580 and np.abs(c[1] - a[1]) <= 620:
+        break
+
+print(f"Latitude spacing for the grid is: {(l-coords[0]):.3e}")
+
+# %%
