@@ -6,6 +6,7 @@ import requests
 import numpy as np
 import math
 import json
+import glob
 
 
 load_dotenv()
@@ -48,6 +49,11 @@ class SatImg:
             raise ValueError
 
     def get_2d_tile(self, z, x, y):
+        # gets tile (not pixel)
+
+        # verify that x and y are ints
+        x = int(x)
+        y = int(y)
 
         input_url = f"https://tile.googleapis.com/v1/2dtiles/{z}/{x}/{y}?session={self.session_token}&key={self.MY_GMAP_API}"
 
@@ -86,48 +92,125 @@ class SatImg:
         return tile_x, tile_y
 
     def convertToPixelCoord(self, lat, long, zoom):
-        TILE_SIZE = self.TILE_SIZE
         world_coord = self.convertLatLongToWorldCoord(lat, long)
 
         scale = 2**zoom
-        pixel_x = np.round(world_coord[0] * scale)
-        pixel_y = np.round(world_coord[1] * scale)
+        pixel_x = int(np.round(world_coord[0] * scale))
+        pixel_y = int(np.round(world_coord[1] * scale))
 
         return pixel_x, pixel_y
 
     def get_static_map(self, lat, long, zoom):
+        flag_cached = False
+        filename = f"data/lat_{lat:.6f}_long_{long:.6f}_zoom_{zoom}.png"
+
+        # check if file is cached
+        prev_files = glob.glob("data/*.png")
+        for imgs in prev_files:
+            if filename in imgs:
+                print("Image already cached")
+                flag_cached = True
+
+        if flag_cached:
+            return
 
         request_url = f"https://maps.googleapis.com/maps/api/staticmap?center={lat},{long}&format=png&zoom={zoom}&size=600x600&maptype=satellite&key={self.MY_GMAP_API}"
         r = requests.get(request_url)
-        print(f"Response status is: {r.status_code}")
-        filename = f"data/lat_{lat}_long_{long}_zoom_{zoom}.png"
+        # print(f"Response status is: {r.status_code}")
+
         with open(filename, "wb") as file:
             file.write(r.content)
 
-    def get_location_grid(self, name_string):
+    def generate_location_grid(self, name_string, zoom_level=12):
         # name string should be format like: "Mountain View, CA", or "Thousand Palms, CA"
         request_url = f"https://maps.googleapis.com/maps/api/geocode/json?address={name_string}&key={self.MY_GMAP_API}"
 
         r = requests.get(request_url)
         output = json.loads(r.content.decode("utf-8"))
 
-        return
+        # grab bounds from json structure
+        grid_start = output["results"][0]["geometry"]["bounds"]["southwest"]
+        grid_end = output["results"][0]["geometry"]["bounds"]["northeast"]
+
+        # grab the tile locations to generate grid
+        [x1, y1] = self.convertLatLongToTileCoord(
+            grid_start["lat"], grid_start["lng"], zoom_level
+        )
+        [x2, y2] = self.convertLatLongToTileCoord(
+            grid_end["lat"], grid_end["lng"], zoom_level
+        )
+
+        # should be positive values for length
+        len_x = x2 - x1
+        len_y = y1 - y2
+
+        # now construct the grid from (x1,y1) to (x2,y2)
+        grid_list = np.zeros((len_x * len_y, 2))
+
+        if grid_list.shape[0] > 2500:
+            raise ValueError("Too many tiles requested")
+
+        counter = 0
+        for idx_x in range(x1, x2):
+            for idx_y in range(y1, y2, -1):
+                grid_list[counter, :] = [idx_x, idx_y]
+                counter += 1
+
+        return grid_list
+
+    def get_grid_images(self, name_string, zoom_level=12):
+        max_tiles = 50
+        tile_grid = self.generate_location_grid(name_string, zoom_level)
+
+        tile_counter = 0
+        for idx, tile in enumerate(tile_grid):
+            self.get_2d_tile(zoom_level, tile[0], tile[1])
+            print(f"Tile {idx}: {tile[0]}, {tile[1]}")
+
+            tile_counter += 1
+            if tile_counter >= max_tiles:
+                raise Warning("More than 10k tiles reached, terminating.")
+                break
+
+    def get_static_grid(self, lat, long, nx, ny, zoom=20):
+        grid_spacing = [6.5e-4, 8e-4]
+
+        if nx % 2 == 1:
+            nx -= 1
+        if ny % 2 == 1:
+            ny -= 1
+
+        counter = 0
+        for x in range(-nx // 2, nx // 2):
+            for y in range(-nx // 2, nx // 2):
+                self.get_static_map(
+                    lat + x * grid_spacing[0], long + y * grid_spacing[1], zoom
+                )
+                print(
+                    f"Tile: {counter}/{nx*ny}: Lat: {lat + x * grid_spacing[0]:.6f}, Long: {long + y * grid_spacing[1]:.6f}"
+                )
+                counter += 1
 
 
 # %%
-zoom_lvl = 10
+zoom_lvl = 21
+town_name = "Thousand Palms, CA"
 s = SatImg()
-# s.get_static_map(33.821179, -116.394663, 18)
-# s.get_static_map(33.813278287410995, -116.38493583152912, 18)
-# s.get_location_grid("Thousand Palms, CA")
 
-output = s.convertLatLongToTileCoord(41.85, -87.65, zoom_lvl)
-output = s.convertToPixelCoord(41.85, -87.65, zoom_lvl)
+# g = s.generate_location_grid(town_name, zoom_lvl)
+
+# s.get_grid_images(town_name, zoom_lvl)
+
+output = s.convertToPixelCoord(33.821179, -116.394663, zoom_lvl)
+
+
+# output = s.get_static_map(33.821179, -116.394663, zoom_lvl)
+# output = s.get_static_map(33.821179, -116.394663, zoom_lvl)
 
 # for i in range(0, 4):
 #     s.get_2d_tile(zoom_lvl, output[0] + i, output[1])
 
-# %%
+# use coordinate spacing to construct grid
+s.get_static_grid(33.821179, -116.394663, 100, 100)
 
-s.convertLatLongToPoint(41.85, -87.65)
-s.convertLatLongToTileCoord(41.85, -87.65, 19)
+# %%
