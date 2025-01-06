@@ -102,6 +102,9 @@ class SatImg:
 
     def get_static_map(self, lat, long, zoom):
         flag_cached = False
+        scale = 1
+        size = "640x640"
+
         filename = f"data/lat_{lat:.6f}_long_{long:.6f}_zoom_{zoom}.png"
 
         # check if file is cached
@@ -114,7 +117,7 @@ class SatImg:
         if flag_cached:
             return
 
-        request_url = f"https://maps.googleapis.com/maps/api/staticmap?center={lat},{long}&format=png&zoom={zoom}&size=600x600&maptype=satellite&key={self.MY_GMAP_API}"
+        request_url = f"https://maps.googleapis.com/maps/api/staticmap?center={lat},{long}&format=png&zoom={zoom}&scale={scale}&size={size}&maptype=satellite&key={self.MY_GMAP_API}"
         r = requests.get(request_url)
         # print(f"Response status is: {r.status_code}")
 
@@ -211,6 +214,6 @@ output = s.convertToPixelCoord(33.821179, -116.394663, zoom_lvl)
 #     s.get_2d_tile(zoom_lvl, output[0] + i, output[1])
 
 # use coordinate spacing to construct grid
-s.get_static_grid(33.821179, -116.394663, 100, 100)
+s.get_static_grid(33.821179, -116.394663, 50, 50)
 
 # %%
