@@ -113,7 +113,7 @@ class SatImg:
             if filename in imgs:
                 print("Image already cached")
                 flag_cached = True
-
+                
         if flag_cached:
             return
 
@@ -214,6 +214,8 @@ output = s.convertToPixelCoord(33.821179, -116.394663, zoom_lvl)
 #     s.get_2d_tile(zoom_lvl, output[0] + i, output[1])
 
 # use coordinate spacing to construct grid
+
 s.get_static_grid(33.821179, -116.394663, 50, 50)
+
 
 # %%
