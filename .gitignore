@@ -173,4 +173,7 @@ cython_debug/
 
 # data folders
 data/
+test/
+train/
+valid/
 *.png
