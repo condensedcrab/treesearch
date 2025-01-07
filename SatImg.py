@@ -191,3 +191,18 @@ class SatImg:
                 )
                 counter += 1
 
+
+
+    def get_bounding_coords(self,place_name):
+        # name string should be format like: "Mountain View, CA", or "Thousand Palms, CA"
+        request_url = f"https://maps.googleapis.com/maps/api/geocode/json?address={place_name}&key={self.MY_GMAP_API}"
+
+        r = requests.get(request_url)
+        output = json.loads(r.content.decode("utf-8"))
+
+        # grab bounds from json structure
+        grid_start = output["results"][0]["geometry"]["bounds"]["southwest"]
+        grid_end = output["results"][0]["geometry"]["bounds"]["northeast"]
+        
+        return [grid_start,grid_end]
+        
