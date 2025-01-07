@@ -1,0 +1,13 @@
+train: ../train/images
+val: ../valid/images
+test: ../test/images
+
+nc: 2
+names: ['palm_no_shadow', 'palm_w_shadow']
+
+roboflow:
+  workspace: treesearch
+  project: palms-nfvyz
+  version: 3
+  license: BY-NC-SA 4.0
+  url: https://universe.roboflow.com/treesearch/palms-nfvyz/dataset/3

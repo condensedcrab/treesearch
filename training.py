@@ -16,7 +16,9 @@ load_dotenv()
 ultralytics.checks()
 
 # %% setup roboflow data (if not already present)
-ROBOFLOW_API_KEY = os.getenv("ROBOFLOW_API") # add Roboflow api to .env file in main git repo
+ROBOFLOW_API_KEY = os.getenv(
+    "ROBOFLOW_API"
+)  # add Roboflow api to .env file in main git repo
 rf = Roboflow(api_key=ROBOFLOW_API_KEY)
 
 workspace = rf.workspace("treesearch")
@@ -31,14 +33,22 @@ flag_train = False
 
 if flag_train:
     # Load a pretrained YOLO model (recommended for training)
-    model = YOLO("yolo11n.pt") # use medium model
-    model = YOLO("/home/david/git/yolo11/runs/detect/palms_v3/weights/last.pt")  # load a partially trained model
+    model = YOLO("yolo11n.pt")  # use medium model
+    model = YOLO(
+        "/home/david/git/yolo11/runs/detect/palms_v3/weights/last.pt"
+    )  # load a partially trained model
 
     # Train the model using data from Roboflow and verify against validation set
-    results = model.train(data=f"{dataset.location}/data.yaml", epochs=500,resume=True,name="palms_v3",patience=100)
+    results = model.train(
+        data=f"{dataset.location}/data.yaml",
+        epochs=500,
+        resume=True,
+        name="palms_v3",
+        patience=100,
+    )
     results = model.val()
 
-# %% 
+# %%
 # using ultralytics docs: https://docs.ultralytics.com/modes/predict/#__tabbed_1_1
 import cv2
 import supervision as sv
@@ -47,9 +57,12 @@ import pandas as pd
 
 df = pd.DataFrame([])
 
-model = YOLO("/home/david/git/yolo11/runs/detect/palms_v3/weights/last.pt")  # load a partially trained model
-
-img_files = glob.glob("/home/david/git/treesearch/data/thousand_palms_640x640_z20_50x50/*.png")
+model = YOLO(
+    "/home/david/git/yolo11/runs/detect/palms_v3/weights/last.pt"
+)  # load a partially trained model
+img_files = glob.glob(
+    "/home/david/git/treesearch/data/thousand_palms_640x640_z20_50x50/*.png"
+)
 
 # Run batched inference on a list of images
 
@@ -62,8 +75,8 @@ for img in img_files:
         if result.boxes is not None:
             df_result = result.to_df()
             # add file name so we can get out the position
-            df_result['file_name'] = img
-            
+            df_result["file_name"] = img
+
             if len(df) == 0:
                 df = df_result
             else:

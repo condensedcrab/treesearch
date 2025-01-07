@@ -8,15 +8,21 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import re
+from ultralytics import YOLO
 
 filename = "model_output.csv"
 
 df = pd.read_csv(filename)
 s = si.SatImg()
-
 output = s.get_bounding_coords("Thousand Palms, CA")
 
 print(output)
+
+# grab the model and get the mAP, P, R
+model = YOLO(
+    "/home/david/git/yolo11/runs/detect/palms_v3/weights/last.pt"
+)  # load a partially trained model
+results = model.val()
 
 # %% set up formatting on the df
 conf_limit = 0.25  # >= this value only
