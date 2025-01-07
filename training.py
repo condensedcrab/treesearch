@@ -31,7 +31,7 @@ flag_train = False
 
 if flag_train:
     # Load a pretrained YOLO model (recommended for training)
-    model = YOLO("yolo11m.pt") # use medium model
+    model = YOLO("yolo11n.pt") # use medium model
     model = YOLO("/home/david/git/yolo11/runs/detect/palms_v3/weights/last.pt")  # load a partially trained model
 
     # Train the model using data from Roboflow and verify against validation set
