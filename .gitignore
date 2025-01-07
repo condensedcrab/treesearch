@@ -178,3 +178,4 @@ train/
 valid/
 datasets/
 *.png
+*.txt
