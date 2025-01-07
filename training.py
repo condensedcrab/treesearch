@@ -61,6 +61,9 @@ for img in img_files:
     for result in results:
         if result.boxes is not None:
             df_result = result.to_df()
+            # add file name so we can get out the position
+            df_result['file_name'] = img
+            
             if len(df) == 0:
                 df = df_result
             else:
@@ -70,5 +73,7 @@ for img in img_files:
             keypoints = result.keypoints  # Keypoints object for pose outputs
             probs = result.probs  # Probs object for classification outputs
             obb = result.obb  # Oriented boxes object for OBB outputs
-            result.show()  # display to screen  
             result.save(filename="result.png")  # save to disk
+
+
+df.to_csv("model_output.csv")
