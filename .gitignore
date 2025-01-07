@@ -179,3 +179,5 @@ valid/
 datasets/
 *.png
 *.txt
+*.csv
+*.jpg
