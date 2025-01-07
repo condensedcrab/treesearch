@@ -204,5 +204,5 @@ class SatImg:
         grid_start = output["results"][0]["geometry"]["bounds"]["southwest"]
         grid_end = output["results"][0]["geometry"]["bounds"]["northeast"]
         
-        return [grid_start,grid_end]
+        return [[grid_start['lat'],grid_start['lng']],[grid_end['lat'],grid_end['lng']]]
         

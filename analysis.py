@@ -13,3 +13,6 @@ filename = "model_output.csv"
 df = pd.read_csv(filename)
 s = si.SatImg()
 
+output = s.get_bounding_coords("Thousand Palms, CA")
+
+print(output)
