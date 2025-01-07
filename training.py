@@ -59,7 +59,7 @@ for img in img_files:
     # Process results list
 
     for result in results:
-        if result.keypoints is not None:
+        if result.boxes is not None:
             df_result = result.to_df()
             if len(df) == 0:
                 df = df_result
