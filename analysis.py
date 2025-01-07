@@ -19,7 +19,7 @@ output = s.get_bounding_coords("Thousand Palms, CA")
 print(output)
 
 # %% set up formatting on the df
-conf_limit = 0.5  # >= this value only
+conf_limit = 0.25  # >= this value only
 
 rows = df["confidence"] >= conf_limit
 df = df[rows]
