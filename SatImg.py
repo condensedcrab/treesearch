@@ -191,26 +191,3 @@ class SatImg:
                 )
                 counter += 1
 
-
-# %%
-zoom_lvl = 21
-town_name = "Thousand Palms, CA"
-s = SatImg()
-
-# g = s.generate_location_grid(town_name, zoom_lvl)
-
-# s.get_grid_images(town_name, zoom_lvl)
-
-output = s.convertToPixelCoord(33.821179, -116.394663, zoom_lvl)
-
-
-# output = s.get_static_map(33.821179, -116.394663, zoom_lvl)
-# output = s.get_static_map(33.821179, -116.394663, zoom_lvl)
-
-# for i in range(0, 4):
-#     s.get_2d_tile(zoom_lvl, output[0] + i, output[1])
-
-# use coordinate spacing to construct grid
-s.get_static_grid(33.821179, -116.394663, 100, 100)
-
-# %%
