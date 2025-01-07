@@ -8,8 +8,8 @@ from roboflow import Roboflow
 from dotenv import load_dotenv
 import os
 
-%load_ext tensorboard
-%tensorboard --logdir /home/david/git/yolo11/runs
+# %load_ext tensorboard
+# %tensorboard --logdir /home/david/git/yolo11/runs
 
 load_dotenv()
 ultralytics.checks()
@@ -32,11 +32,11 @@ from ultralytics import YOLO
 # model = YOLO("yolo11n.yaml")
 
 # Load a pretrained YOLO model (recommended for training)
-model = YOLO("yolo11n.pt")
-# model = YOLO("/home/david/git/yolo11/runs/detect/train15_200/weights/last.pt")  # load a partially trained model
+# model = YOLO("yolo11n.pt")
+model = YOLO("/home/david/git/yolo11/runs/detect/palms_v3/weights/last.pt")  # load a partially trained model
 
 # Train the model using data from Roboflow 
-results = model.train(data=f"{dataset.location}/data.yaml", epochs=5000,name="palms_v3",patience=200)
+results = model.train(data=f"{dataset.location}/data.yaml", epochs=5000,resume=True,name="palms_v3",patience=200)
 # results = model.train(data=f"{dataset.location}/data.yaml", epochs=5000, resume=True,patience=100)
 # Evaluate the model's performance on the validation set
 results = model.val()
