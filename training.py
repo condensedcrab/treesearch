@@ -27,20 +27,16 @@ dataset = version.download("yolov11")
 # !yolo train model=yolo11n.pt data=/home/david/git/treesearch/palms-3/data.yml epochs=3 imgsz=640
 
 # %% run YOLO model in Python
+flag_train = False
 
+if flag_train:
+    # Load a pretrained YOLO model (recommended for training)
+    model = YOLO("yolo11m.pt") # use medium model
+    model = YOLO("/home/david/git/yolo11/runs/detect/palms_v3/weights/last.pt")  # load a partially trained model
 
-# # Create a new YOLO model from scratch
-# model = YOLO("yolo11n.yaml")
-
-# Load a pretrained YOLO model (recommended for training)
-model = YOLO("yolo11m.pt") # use medium model
-model = YOLO("/home/david/git/yolo11/runs/detect/palms_v3/weights/last.pt")  # load a partially trained model
-
-# Train the model using data from Roboflow 
-results = model.train(data=f"{dataset.location}/data.yaml", epochs=500,resume=True,name="palms_v3",patience=100)
-# results = model.train(data=f"{dataset.location}/data.yaml", epochs=5000, resume=True,patience=100)
-# Evaluate the model's performance on the validation set
-results = model.val()
+    # Train the model using data from Roboflow and verify against validation set
+    results = model.train(data=f"{dataset.location}/data.yaml", epochs=500,resume=True,name="palms_v3",patience=100)
+    results = model.val()
 
 # %% 
 # using ultralytics docs: https://docs.ultralytics.com/modes/predict/#__tabbed_1_1
