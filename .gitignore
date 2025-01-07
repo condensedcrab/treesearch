@@ -176,4 +176,5 @@ data/
 test/
 train/
 valid/
+datasets/
 *.png
