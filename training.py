@@ -8,6 +8,8 @@ from roboflow import Roboflow
 from dotenv import load_dotenv
 import os
 
+%load_ext tensorboard
+%tensorboard --logdir /home/david/git/yolo11/runs
 
 load_dotenv()
 ultralytics.checks()
