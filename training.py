@@ -56,7 +56,7 @@ for img in img_files:
 
     # Process results list
     for result in results:
-        df_result =  = result.to_df()
+        df_result = result.to_df()
         print(csv_result)
         boxes = result.boxes  # Boxes object for bounding box outputs
         masks = result.masks  # Masks object for segmentation masks outputs
