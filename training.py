@@ -36,9 +36,11 @@ from ultralytics import YOLO
 model = YOLO("/home/david/git/yolo11/runs/detect/palms_v3/weights/last.pt")  # load a partially trained model
 
 # Train the model using data from Roboflow 
-results = model.train(data=f"{dataset.location}/data.yaml", epochs=5000,resume=True,name="palms_v3",patience=200)
+results = model.train(data=f"{dataset.location}/data.yaml", epochs=500,resume=True,name="palms_v3_half",patience=100)
 # results = model.train(data=f"{dataset.location}/data.yaml", epochs=5000, resume=True,patience=100)
 # Evaluate the model's performance on the validation set
 results = model.val()
+
+# %% 
 
 
