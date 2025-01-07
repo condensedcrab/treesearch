@@ -45,6 +45,8 @@ import supervision as sv
 import glob
 import pandas as pd
 
+df = pd.DataFrame([])
+
 model = YOLO("/home/david/git/yolo11/runs/detect/palms_v3/weights/last.pt")  # load a partially trained model
 
 img_files = glob.glob("/home/david/git/treesearch/data/thousand_palms_640x640_z20_50x50/*.png")
@@ -55,13 +57,18 @@ for img in img_files:
     results = model(img)  # return a list of Results objects
 
     # Process results list
+
     for result in results:
-        df_result = result.to_df()
-        print(csv_result)
-        boxes = result.boxes  # Boxes object for bounding box outputs
-        masks = result.masks  # Masks object for segmentation masks outputs
-        keypoints = result.keypoints  # Keypoints object for pose outputs
-        probs = result.probs  # Probs object for classification outputs
-        obb = result.obb  # Oriented boxes object for OBB outputs
-        result.show()  # display to screen
-        result.save(filename="result.png")  # save to disk
+        if result.keypoints is not None:
+            df_result = result.to_df()
+            if len(df) == 0:
+                df = df_result
+            else:
+                df = pd.concat([df, df_result], ignore_index=True)
+            boxes = result.boxes  # Boxes object for bounding box outputs
+            masks = result.masks  # Masks object for segmentation masks outputs
+            keypoints = result.keypoints  # Keypoints object for pose outputs
+            probs = result.probs  # Probs object for classification outputs
+            obb = result.obb  # Oriented boxes object for OBB outputs
+            result.show()  # display to screen  
+            result.save(filename="result.png")  # save to disk
