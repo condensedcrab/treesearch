@@ -9,8 +9,8 @@ from dotenv import load_dotenv
 import os
 from ultralytics import YOLO
 
-%load_ext tensorboard
-%tensorboard --logdir /home/david/git/yolo11/runs
+# %load_ext tensorboard
+# %tensorboard --logdir /home/david/git/yolo11/runs
 
 load_dotenv()
 ultralytics.checks()
@@ -62,7 +62,7 @@ model = YOLO(
 img_files = glob.glob(
     "/home/david/git/treesearch/data/thousand_palms_640x640_z20_50x50/*.png"
 )
-
+img_files = []
 # Run batched inference on a list of images
 
 for img in img_files:
@@ -88,4 +88,4 @@ for img in img_files:
             result.save(filename="result.png")  # save to disk
 
 
-df.to_csv("model_output.csv")
+# df.to_csv("model_output.csv")
