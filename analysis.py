@@ -25,10 +25,11 @@ model = YOLO(
 results = model.val()
 
 # %% set up formatting on the df
-conf_limit = 0.25  # >= this value only
+conf_limit = 0.33  # >= this value only
 
 rows = df["confidence"] >= conf_limit
 df = df[rows]
+
 
 num_palms = 0
 

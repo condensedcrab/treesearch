@@ -9,8 +9,8 @@ from dotenv import load_dotenv
 import os
 from ultralytics import YOLO
 
-# %load_ext tensorboard
-# %tensorboard --logdir /home/david/git/yolo11/runs
+%load_ext tensorboard
+%tensorboard --logdir /home/david/git/yolo11/runs
 
 load_dotenv()
 ultralytics.checks()
@@ -29,22 +29,21 @@ dataset = version.download("yolov11")
 # !yolo train model=yolo11n.pt data=/home/david/git/treesearch/palms-3/data.yml epochs=3 imgsz=640
 
 # %% run YOLO model in Python
-flag_train = False
+flag_train = True
 
 if flag_train:
     # Load a pretrained YOLO model (recommended for training)
-    model = YOLO("yolo11n.pt")  # use medium model
-    model = YOLO(
-        "/home/david/git/yolo11/runs/detect/palms_v3/weights/last.pt"
-    )  # load a partially trained model
+    model = YOLO("yolo11n.pt")  # only nano model fits in VRAM
+    # model = YOLO(
+    #     "/home/david/git/yolo11/runs/detect/palms_v3/weights/last.pt"
+    # )  # load a partially trained model
 
     # Train the model using data from Roboflow and verify against validation set
     results = model.train(
         data=f"{dataset.location}/data.yaml",
         epochs=500,
-        resume=True,
-        name="palms_v3",
-        patience=100,
+        resume=False,
+        name="palms_v4",
     )
     results = model.val()
 
