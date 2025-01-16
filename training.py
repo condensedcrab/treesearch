@@ -41,7 +41,7 @@ if flag_train:
     # Train the model using data from Roboflow and verify against validation set
     results = model.train(
         data=f"{dataset.location}/data.yaml",
-        epochs=500,
+        epochs=200,
         resume=False,
         name="palms_v4",
     )
