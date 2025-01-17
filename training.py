@@ -2,7 +2,6 @@
 # following instructions from: https://blog.roboflow.com/yolov11-how-to-train-custom-data/
 # and Google colab notebook: https://colab.research.google.com/github/roboflow-ai/notebooks/blob/main/notebooks/train-yolo11-object-detection-on-custom-dataset.ipynb?ref=blog.roboflow.com#scrollTo=1nOnTQynZfeA
 
-import ultralytics
 from PIL import Image
 from roboflow import Roboflow
 from dotenv import load_dotenv
@@ -52,19 +51,16 @@ import pandas as pd
 df = pd.DataFrame([])
 
 model = YOLO(
-    "models/weights/last.pt"
+    "models/runs/detect/palms_search/weights/best.pt"
 )  # load a partially trained model
 img_files = glob.glob(
     "data/thousand_palms_640x640_z20_50x50/*.png"
 )
-img_files = []
-# Run batched inference on a list of images
-
+# Run batched inference on a list of images in a loop since I do not have sufficient video memory to stream/batch that many images at once.
 for img in img_files:
     results = model(img)  # return a list of Results objects
 
-    # Process results list
-
+    # Process results list and only pull the results and metadata for images with detections
     for result in results:
         if result.boxes is not None:
             df_result = result.to_df()
@@ -82,5 +78,5 @@ for img in img_files:
             obb = result.obb  # Oriented boxes object for OBB outputs
             result.save(filename="result.png")  # save to disk
 
-
-df.to_csv("model_output.csv")
+# save the outputs to process later
+df.to_csv("palmsearch_model_output.csv")
