@@ -54,7 +54,7 @@ import pandas as pd
 df = pd.DataFrame([])
 
 model = YOLO(
-    "/home/david/git/yolo11/runs/detect/palms_v3/weights/last.pt"
+    "models/weights/last.pt"
 )  # load a partially trained model
 img_files = glob.glob(
     "data/thousand_palms_640x640_z20_50x50/*.png"
