@@ -25,8 +25,6 @@ workspace = rf.workspace("treesearch")
 project = workspace.project("palms-nfvyz")
 version = project.version(3)
 dataset = version.download("yolov11")
-# %%
-# !yolo train model=yolo11n.pt data=/home/david/git/treesearch/palms-3/data.yml epochs=3 imgsz=640
 
 # %% run YOLO model in Python
 flag_train = False

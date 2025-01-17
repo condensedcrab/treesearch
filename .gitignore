@@ -177,6 +177,7 @@ test/
 train/
 valid/
 datasets/
+palms-3/
 *.png
 *.txt
 *.csv
