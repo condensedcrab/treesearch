@@ -100,9 +100,9 @@ class SatImg:
 
         return pixel_x, pixel_y
 
-    def get_static_map(self, lat, long, zoom):
+    def get_static_map(self, lat, long, zoom,file_path="data/"):
         flag_cached = False
-        filename = f"data/lat_{lat:.6f}_long_{long:.6f}_zoom_{zoom}.png"
+        filename = f"{file_path}/lat_{lat:.6f}_long_{long:.6f}_zoom_{zoom}.png"
 
         # check if file is cached
         prev_files = glob.glob("data/*.png")
@@ -172,7 +172,13 @@ class SatImg:
                 raise Warning("More than 10k tiles reached, terminating.")
                 break
 
-    def get_static_grid(self, lat, long, nx, ny, zoom=20):
+    def get_static_grid(self, lat, long, nx, ny, zoom=20,file_path="data/"):
+        
+        # check if file path for ouptut images is valid
+        if not os.path.isdir(file_path):
+            raise ValueError(f"File path is not a valid folder. Please double check your folder and try again. Your input was: {file_path}")
+
+        # calculated latitude and longitude spacing. 
         grid_spacing = [6.5e-4, 8e-4]
 
         if nx % 2 == 1:
@@ -183,8 +189,7 @@ class SatImg:
         counter = 0
         for x in range(-nx // 2, nx // 2):
             for y in range(-nx // 2, nx // 2):
-                self.get_static_map(
-                    lat + x * grid_spacing[0], long + y * grid_spacing[1], zoom
+                self.get_static_map(lat + x * grid_spacing[0], long + y * grid_spacing[1], zoom, file_path
                 )
                 print(
                     f"Tile: {counter}/{nx*ny}: Lat: {lat + x * grid_spacing[0]:.6f}, Long: {long + y * grid_spacing[1]:.6f}"
