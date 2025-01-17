@@ -29,21 +29,18 @@ dataset = version.download("yolov11")
 # !yolo train model=yolo11n.pt data=/home/david/git/treesearch/palms-3/data.yml epochs=3 imgsz=640
 
 # %% run YOLO model in Python
-flag_train = True
+flag_train = False
 
 if flag_train:
     # Load a pretrained YOLO model (recommended for training)
     model = YOLO("yolo11n.pt")  # only nano model fits in VRAM
-    # model = YOLO(
-    #     "/home/david/git/yolo11/runs/detect/palms_v3/weights/last.pt"
-    # )  # load a partially trained model
 
     # Train the model using data from Roboflow and verify against validation set
     results = model.train(
         data=f"{dataset.location}/data.yaml",
         epochs=200,
         resume=False,
-        name="palms_v4",
+        name="palms_search",
     )
     results = model.val()
 
@@ -60,7 +57,7 @@ model = YOLO(
     "/home/david/git/yolo11/runs/detect/palms_v3/weights/last.pt"
 )  # load a partially trained model
 img_files = glob.glob(
-    "/home/david/git/treesearch/data/thousand_palms_640x640_z20_50x50/*.png"
+    "data/thousand_palms_640x640_z20_50x50/*.png"
 )
 img_files = []
 # Run batched inference on a list of images
@@ -88,4 +85,4 @@ for img in img_files:
             result.save(filename="result.png")  # save to disk
 
 
-# df.to_csv("model_output.csv")
+df.to_csv("model_output.csv")
