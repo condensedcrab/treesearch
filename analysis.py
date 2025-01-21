@@ -64,7 +64,7 @@ model = YOLO(
 results = model.val()
 
 # %% set up formatting on the df
-conf_limit = [0.1, 0.15, 0.2, 0.25, 0.5]  # >= this value only
+conf_limit = [0.25,0.3,0.4,0.5,0.6,0.8]  # >= this value only
 
 for conf_lvl in conf_limit:
     df = pd.read_csv(filename)
