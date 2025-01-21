@@ -1,57 +1,52 @@
 # %% load necessary packages
-# import common packages and load data
-
+# using ultralytics docs: https://docs.ultralytics.com/modes/predict/#__tabbed_1_1
 import glob
 import SatImg as si
-import seaborn as sns
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import re
 from ultralytics import YOLO
+import seaborn as sns
 
+FLAG_INFERENCE = False
 
+if FLAG_INFERENCE:
 
-# using ultralytics docs: https://docs.ultralytics.com/modes/predict/#__tabbed_1_1
-import cv2
-import supervision as sv
-import glob
-import pandas as pd
+    df = pd.DataFrame([])
 
-df = pd.DataFrame([])
+    model = YOLO(
+        "models/runs/detect/palms_search/weights/best.pt"
+    )  # load a partially trained model
+    img_files = glob.glob(
+        "data/thousand_palms_640x640_z20_50x50/*.png"
+    )
+    output_folder = "filter_data"
 
-model = YOLO(
-    "models/runs/detect/palms_search/weights/best.pt"
-)  # load a partially trained model
-img_files = glob.glob(
-    "data/thousand_palms_640x640_z20_50x50/*.png"
-)
-output_folder = "filter_data"
+    # Run batched inference on a list of images in a loop since I do not have sufficient video memory to stream/batch that many images at once.
+    for img in img_files:
+        results = model(img)  # return a list of Results objects
 
-# Run batched inference on a list of images in a loop since I do not have sufficient video memory to stream/batch that many images at once.
-for img in img_files:
-    results = model(img)  # return a list of Results objects
+        # Process results list and only pull the results and metadata for images with detections
+        for result in results:
+            if result.boxes is not None:
+                df_result = result.to_df()
+                # add file name so we can get out the position
+                df_result["file_name"] = img
 
-    # Process results list and only pull the results and metadata for images with detections
-    for result in results:
-        if result.boxes is not None:
-            df_result = result.to_df()
-            # add file name so we can get out the position
-            df_result["file_name"] = img
+                if len(df) == 0:
+                    df = df_result
+                else:
+                    df = pd.concat([df, df_result], ignore_index=True)
+                boxes = result.boxes  # Boxes object for bounding box outputs
+                masks = result.masks  # Masks object for segmentation masks outputs
+                keypoints = result.keypoints  # Keypoints object for pose outputs
+                probs = result.probs  # Probs object for classification outputs
+                obb = result.obb  # Oriented boxes object for OBB outputs
+                result.save(filename=f"{output_folder}/result.png")  # save to disk
 
-            if len(df) == 0:
-                df = df_result
-            else:
-                df = pd.concat([df, df_result], ignore_index=True)
-            boxes = result.boxes  # Boxes object for bounding box outputs
-            masks = result.masks  # Masks object for segmentation masks outputs
-            keypoints = result.keypoints  # Keypoints object for pose outputs
-            probs = result.probs  # Probs object for classification outputs
-            obb = result.obb  # Oriented boxes object for OBB outputs
-            result.save(filename=f"{output_folder}/result.png")  # save to disk
-
-# save the outputs to process later
-df.to_csv("palmsearch_model_output.csv")
+    # save the outputs to process later
+    df.to_csv("palmsearch_model_output.csv")
 
 # %% analyze the results from the grid 
 filename = "palmsearch_model_output.csv"
@@ -105,8 +100,8 @@ rows = df["confidence"] >= conf_lvl
 df = df[rows]
 
 plt.figure()
-plt.hist(df['confidence'],bins=20,edgecolor='black')
-plt.hist(df['confidence'],bins=20,edgecolor='red',cumulative=True, density=True)
+# plt.hist(df['confidence'],bins=20,edgecolor='black')
+plt.hist(df['confidence'],bins=20,cumulative=True, density=True)
 
 
 plt.xlabel("Inference Confidence")
