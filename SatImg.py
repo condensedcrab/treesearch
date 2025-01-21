@@ -100,12 +100,12 @@ class SatImg:
 
         return pixel_x, pixel_y
 
-    def get_static_map(self, lat, long, zoom):
+    def get_static_map(self, lat, long, zoom,file_path="data/"):
         flag_cached = False
+        filename = f"{file_path}/lat_{lat:.6f}_long_{long:.6f}_zoom_{zoom}.png"
+
         scale = 1
         size = "640x640"
-
-        filename = f"data/lat_{lat:.6f}_long_{long:.6f}_zoom_{zoom}.png"
 
         # check if file is cached
         prev_files = glob.glob("data/*.png")
@@ -175,7 +175,13 @@ class SatImg:
                 raise Warning("More than 10k tiles reached, terminating.")
                 break
 
-    def get_static_grid(self, lat, long, nx, ny, zoom=20):
+    def get_static_grid(self, lat, long, nx, ny, zoom=20,file_path="data/"):
+        
+        # check if file path for ouptut images is valid
+        if not os.path.isdir(file_path):
+            raise ValueError(f"File path is not a valid folder. Please double check your folder and try again. Your input was: {file_path}")
+
+        # calculated latitude and longitude spacing. 
         grid_spacing = [6.5e-4, 8e-4]
 
         if nx % 2 == 1:
@@ -186,36 +192,26 @@ class SatImg:
         counter = 0
         for x in range(-nx // 2, nx // 2):
             for y in range(-nx // 2, nx // 2):
-                self.get_static_map(
-                    lat + x * grid_spacing[0], long + y * grid_spacing[1], zoom
+                self.get_static_map(lat + x * grid_spacing[0], long + y * grid_spacing[1], zoom, file_path
                 )
                 print(
                     f"Tile: {counter}/{nx*ny}: Lat: {lat + x * grid_spacing[0]:.6f}, Long: {long + y * grid_spacing[1]:.6f}"
                 )
                 counter += 1
 
+    def get_bounding_coords(self, place_name):
+        # name string should be format like: "Mountain View, CA", or "Thousand Palms, CA"
+        request_url = f"https://maps.googleapis.com/maps/api/geocode/json?address={place_name}&key={self.MY_GMAP_API}"
 
-# %%
-zoom_lvl = 21
-town_name = "Thousand Palms, CA"
-s = SatImg()
+        r = requests.get(request_url)
+        output = json.loads(r.content.decode("utf-8"))
 
-# g = s.generate_location_grid(town_name, zoom_lvl)
-
-# s.get_grid_images(town_name, zoom_lvl)
-
-output = s.convertToPixelCoord(33.821179, -116.394663, zoom_lvl)
-
-
-# output = s.get_static_map(33.821179, -116.394663, zoom_lvl)
-# output = s.get_static_map(33.821179, -116.394663, zoom_lvl)
-
-# for i in range(0, 4):
-#     s.get_2d_tile(zoom_lvl, output[0] + i, output[1])
-
-# use coordinate spacing to construct grid
-
-s.get_static_grid(33.821179, -116.394663, 50, 50)
+        # grab bounds from json structure
+        grid_start = output["results"][0]["geometry"]["bounds"]["southwest"]
+        grid_end = output["results"][0]["geometry"]["bounds"]["northeast"]
 
 
-# %%
+        return [
+            [grid_start["lat"], grid_start["lng"]],
+            [grid_end["lat"], grid_end["lng"]],
+        ]
