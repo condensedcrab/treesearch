@@ -100,12 +100,21 @@ rows = df["confidence"] >= conf_lvl
 df = df[rows]
 
 plt.figure()
-# plt.hist(df['confidence'],bins=20,edgecolor='black')
-plt.hist(df['confidence'],bins=20,cumulative=True, density=True)
+fig, ax1 = plt.subplots()
 
+ax2 = ax1.twinx()
+h = sns.histplot(df['confidence'],stat="count",bins=20,edgecolor='black',ax=ax1)
+
+sns.histplot(
+    data=df['confidence'],  fill=False,
+    cumulative=True, stat="count", common_norm=False, ax=ax2, color='k',
+    element='step'
+)
+# sns.ecdfplot(df['confidence'])
 
 plt.xlabel("Inference Confidence")
-plt.ylabel("Counts")
+plt.ylabel("Counts (cumulative)")
+
 plt.show()
 
 
