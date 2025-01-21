@@ -18,16 +18,17 @@ output = s.get_bounding_coords("Thousand Palms, CA")
 
 print(output)
 
-# grab the model and get the mAP, P, R
+# %% grab the model and get the mAP, P, R
 model = YOLO(
     "/home/david/git/yolo11/runs/detect/palms_v3/weights/last.pt"
 )  # load a partially trained model
 results = model.val()
 
 # %% set up formatting on the df
-conf_limit = [0.1, 0.25, 0.5]  # >= this value only
+conf_limit = [0.1, 0.15, 0.2, 0.25, 0.5]  # >= this value only
 
 for conf_lvl in conf_limit:
+    df = pd.read_csv(filename)
     rows = df["confidence"] >= conf_lvl
     df = df[rows]
 
@@ -52,3 +53,14 @@ for conf_lvl in conf_limit:
 
 
     print(f"At conf level {conf_lvl}, palms found: {num_palms}")
+
+# %% analyze the results for the given confidence level
+conf_lvl = 0.25
+df = pd.read_csv(filename)
+rows = df["confidence"] >= conf_lvl
+df = df[rows]
+
+plt.figure()
+h = plt.hist(df['confidence'])
+
+
