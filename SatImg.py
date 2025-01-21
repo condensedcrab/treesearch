@@ -104,17 +104,20 @@ class SatImg:
         flag_cached = False
         filename = f"{file_path}/lat_{lat:.6f}_long_{long:.6f}_zoom_{zoom}.png"
 
+        scale = 1
+        size = "640x640"
+
         # check if file is cached
         prev_files = glob.glob("data/*.png")
         for imgs in prev_files:
             if filename in imgs:
                 print("Image already cached")
                 flag_cached = True
-
+                
         if flag_cached:
             return
 
-        request_url = f"https://maps.googleapis.com/maps/api/staticmap?center={lat},{long}&format=png&zoom={zoom}&size=600x600&maptype=satellite&key={self.MY_GMAP_API}"
+        request_url = f"https://maps.googleapis.com/maps/api/staticmap?center={lat},{long}&format=png&zoom={zoom}&scale={scale}&size={size}&maptype=satellite&key={self.MY_GMAP_API}"
         r = requests.get(request_url)
         # print(f"Response status is: {r.status_code}")
 
@@ -206,6 +209,7 @@ class SatImg:
         # grab bounds from json structure
         grid_start = output["results"][0]["geometry"]["bounds"]["southwest"]
         grid_end = output["results"][0]["geometry"]["bounds"]["northeast"]
+
 
         return [
             [grid_start["lat"], grid_start["lng"]],
