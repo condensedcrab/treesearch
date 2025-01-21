@@ -12,7 +12,8 @@ from ultralytics import YOLO
 # %tensorboard --logdir /home/david/git/yolo11/runs
 
 load_dotenv()
-ultralytics.checks()
+# ultralytics.checks()
+
 
 # %% setup roboflow data (if not already present)
 ROBOFLOW_API_KEY = os.getenv(
@@ -26,7 +27,7 @@ version = project.version(3)
 dataset = version.download("yolov11")
 
 # %% run YOLO model in Python
-flag_train = False
+flag_train = True
 
 if flag_train:
     # Load a pretrained YOLO model (recommended for training)
@@ -56,6 +57,8 @@ model = YOLO(
 img_files = glob.glob(
     "data/thousand_palms_640x640_z20_50x50/*.png"
 )
+output_folder = "filter_data"
+
 # Run batched inference on a list of images in a loop since I do not have sufficient video memory to stream/batch that many images at once.
 for img in img_files:
     results = model(img)  # return a list of Results objects
@@ -76,7 +79,7 @@ for img in img_files:
             keypoints = result.keypoints  # Keypoints object for pose outputs
             probs = result.probs  # Probs object for classification outputs
             obb = result.obb  # Oriented boxes object for OBB outputs
-            result.save(filename="result.png")  # save to disk
+            result.save(filename=f"{output_folder}/result.png")  # save to disk
 
 # save the outputs to process later
 df.to_csv("palmsearch_model_output.csv")

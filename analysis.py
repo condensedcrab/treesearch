@@ -10,7 +10,7 @@ import pandas as pd
 import re
 from ultralytics import YOLO
 
-filename = "model_output.csv"
+filename = "palmsearch_model_output.csv"
 
 df = pd.read_csv(filename)
 s = si.SatImg()
